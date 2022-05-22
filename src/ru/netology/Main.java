@@ -25,22 +25,7 @@ public class Main {
         saveGame("D://Games/savegames/save3.dat", games3);
 
         String[] file = {"D://Games/savegames/save1.dat", "D://Games/savegames/save2.dat", "D://Games/savegames/save3.dat"};
-
-        for (int i = 0; i < file.length; i++) {
-            try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream("D://Games/savegames/zip.zip"));
-                 FileInputStream fis = new FileInputStream(file[i]);) { // имя файла который хотим записать
-                ZipEntry entry = new ZipEntry("packed_notes.txt");
-                zout.putNextEntry(entry);
-                byte[] buffer = new byte[fis.available()];
-                fis.read(buffer);
-                zout.write(buffer);
-                zout.closeEntry();
-
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
-
+        zipFiles(file, "D://Games/savegames/zip.zip");
 
         for (int i = 0; i < file.length; i++) {
             try {
@@ -64,4 +49,22 @@ public class Main {
 //        String a = way.toString();
 //        System.out.println(a);
     }
+
+    public static void zipFiles(String[] file, String zipFile) {
+        try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(zipFile))) {
+            for (int i = 0; i < file.length; i++) {
+                FileInputStream fis = new FileInputStream(file[i]); // имя файла который хотим записать
+                ZipEntry entry = new ZipEntry("save" + (i + 1) + ".dat");
+                zout.putNextEntry(entry);
+                byte[] buffer = new byte[fis.available()];
+                fis.read(buffer);
+                zout.write(buffer);
+                zout.closeEntry();
+                fis.close();
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
 }
